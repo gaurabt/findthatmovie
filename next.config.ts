@@ -9,7 +9,7 @@ const nextConfig: NextConfig = {
         pathname: '/t/p/**',
       },
     ],
-  },
+  }
 };
 
 export default nextConfig;

@@ -1,11 +1,11 @@
 import { NextResponse } from 'next/server';
 import { searchMovies } from '@/utils/tmdb';
-import { generateSearchTerms } from '@/utils/openai';
-
-export const runtime = 'edge';
+import { generateSearchTerms } from '@/utils/gemini';
 
 export async function POST(request: Request) {
-  if (!process.env.TMDB_API_KEY) {
+  // Check for required API keys
+  if (!process.env.NEXT_PUBLIC_TMDB_API_KEY) {
+    console.error('TMDB API key is missing in environment');
     return NextResponse.json(
       { error: 'TMDB API key not configured' },
       { status: 500 }
@@ -24,16 +24,18 @@ export async function POST(request: Request) {
       );
     }
 
-    // Try to generate optimized search terms using OpenAI
-    console.log('Generating search terms for description:', description);
+    // Generate search terms using Gemini AI
+    console.log('Generating search terms with Gemini for description:', description);
     let searchTerms;
+    let usingFallback = false;
+    
     try {
       searchTerms = await generateSearchTerms(description);
-      console.log('Generated search terms:', searchTerms);
+      console.log('Gemini generated search terms:', searchTerms);
     } catch (error) {
-      console.warn('Failed to generate search terms:', error);
-      // Fall back to direct search
+      console.error('Gemini API failed, using description directly:', error);
       searchTerms = description;
+      usingFallback = true;
     }
 
     // Search movies with generated terms
@@ -43,11 +45,11 @@ export async function POST(request: Request) {
     console.log('Search results:', {
       originalDescription: description,
       searchTerms,
-      count: movies.length,
+      usingFallback,
+      totalResults: movies.length,
       firstMovie: movies[0]?.title
     });
 
-    // Return results
     // Return results with search metadata
     return NextResponse.json({
       success: true,
@@ -56,7 +58,8 @@ export async function POST(request: Request) {
       searchMetadata: {
         originalDescription: description,
         searchTerms,
-        usedOpenAI: searchTerms !== description
+        usingGemini: !usingFallback,
+        usingFallback
       }
     });
 

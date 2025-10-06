@@ -105,13 +105,66 @@ export function generateSearchQueries(description: string): string {
   }
 
   const searchTerms = extractKeyPhrases(description);
+  const words = description.toLowerCase().split(/\s+/);
   
-  // For short descriptions that look like titles, prioritize exact matches
+  // If it's a very short query that looks like a title
   if (description.split(' ').length <= 3) {
-    return searchTerms[0]; // Return the exact phrase
+    // Return the full description for exact matching
+    return description;
   }
   
-  // For longer descriptions, combine the most relevant terms
-  // Prioritize patterns that were matched (they come first in the array)
-  return searchTerms.slice(0, 3).join(', ');
+  // For queries with quotes, prioritize the quoted text
+  const quotedMatch = description.match(/"([^"]+)"/);
+  if (quotedMatch) {
+    return quotedMatch[1];
+  }
+
+  // Check for specific patterns
+  const yearMatch = description.match(/(?:19|20)\d{2}/);
+  const genreMatch = description.match(/\b(action|adventure|comedy|drama|horror|thriller|sci-fi|science\s*fiction|animation|animated|documentary|romance|romantic|fantasy|superhero|musical|western|crime|mystery|family)\b/i);
+  
+  // Build search query based on patterns found
+  let queryParts = [];
+  
+  // Add the first meaningful phrase (potential title or main concept)
+  if (searchTerms.length > 0) {
+    queryParts.push(searchTerms[0]);
+  }
+  
+  // Add year if found
+  if (yearMatch) {
+    queryParts.push(yearMatch[0]);
+  }
+  
+  // Add genre if found
+  if (genreMatch) {
+    queryParts.push(genreMatch[1]);
+  }
+  
+  // If we have too few terms, add more meaningful phrases
+  if (queryParts.length < 2 && searchTerms.length > 1) {
+    queryParts.push(searchTerms[1]);
+  }
+  
+  // For descriptions mentioning specific details (plot, characters, etc)
+  const plotIndicators = ['about', 'where', 'story', 'plot', 'follows'];
+  if (plotIndicators.some(indicator => words.includes(indicator))) {
+    // Find the part after these indicators
+    const plotPart = description
+      .toLowerCase()
+      .split(/\b(about|where|story|plot|follows)\b/)
+      .pop()
+      ?.trim()
+      .split(/[,.]/)
+      [0];
+    
+    if (plotPart && plotPart.length > 3) {
+      queryParts.push(plotPart);
+    }
+  }
+  
+  // Return unique terms, prioritizing the most specific ones
+  return Array.from(new Set(queryParts))
+    .slice(0, 3)
+    .join(', ');
 }
