@@ -1,5 +1,5 @@
 'use client';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import MovieCard from './MovieCard';
 
 interface Movie {
@@ -16,6 +16,18 @@ export default function Searchbar() {
   const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  // Clear results when search input is empty after a delay
+  useEffect(() => {
+    if (description.trim() === '') {
+      const timeout = setTimeout(() => {
+        setMovies([]);
+        setError('');
+      }, 500); // Clear after 500ms
+
+      return () => clearTimeout(timeout);
+    }
+  }, [description]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -76,7 +88,7 @@ export default function Searchbar() {
       )}
 
       {movies.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {movies.map((movie) => (
             <MovieCard
               key={movie.id}

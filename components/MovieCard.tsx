@@ -20,16 +20,16 @@ export default function MovieCard({
     : '/no-poster.png';
 
   return (
-    <div className="bg-white rounded-lg shadow-md overflow-hidden">
-      <div className="relative h-[400px]">
+    <div className="bg-white rounded-lg shadow-md overflow-hidden p-4">
+      <div className="relative h-[300px]">
         <Image
           src={imageUrl}
           alt={title}
           fill
-          className="object-cover"
+          className="object-cover rounded-md"
         />
       </div>
-      <div className="p-4">
+      <div className='mt-4'>
         <h3 className="text-xl font-semibold mb-2">{title}</h3>
         <p className="text-gray-600 text-sm mb-2">
           Released: {new Date(releaseDate).toLocaleDateString()}

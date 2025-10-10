@@ -20,24 +20,27 @@ export async function generateSearchTerms(description: string): Promise<string> 
     const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" }); // Using the stable model name
 
     // Create a focused prompt for movie search term generation
-    const prompt = `You are a movie search expert. Given a movie description, generate the most effective search terms to find that specific movie.
+    const prompt = `You are a movie search expert. Given a movie description, identify the specific movie and generate the BEST single search term to find it.
 
 Movie description: "${description}"
 
-Generate 3-4 comma-separated search terms that would help find this exact movie. Focus on:
-1. Exact title if clearly mentioned or if you can identify the movie
-2. Year if mentioned
-3. Director or key cast if obvious from description
-4. Distinctive plot elements or themes
+If you can identify the exact movie:
+- Return ONLY the movie title (include year if helpful for disambiguation)
+- If it's a non-English movie, include the English title
 
-Be very specific and avoid generic terms. If you can identify the movie, include both English and original titles.
+If you cannot identify the exact movie:
+- Generate ONE specific search phrase that captures the most distinctive elements
+- Focus on unique plot points, character names, or memorable scenes
+- Avoid generic terms like "action", "comedy", "animated"
 
 Examples:
-- "animated movie from 2016 about body switching" → "Your Name, Kimi no Na wa, 2016, Makoto Shinkai"
-- "sci-fi movie with dreams within dreams" → "Inception, 2010, Christopher Nolan, dream"
-- "zombie movie with Will Smith" → "I Am Legend, 2007, Will Smith, zombie"
+- "animated movie from 2016 about body switching" → "Your Name"
+- "sci-fi movie with dreams within dreams" → "Inception"
+- "zombie movie with Will Smith" → "I Am Legend"
+- "movie about a fish looking for his son" → "Finding Nemo"
+- "robot movie with Wall-E" → "Wall-E"
 
-Return only the search terms, nothing else:`;
+Return ONLY ONE search term, nothing else:`;
 
     const result = await model.generateContent(prompt);
     const response = result.response;
@@ -52,31 +55,38 @@ Return only the search terms, nothing else:`;
   } catch (error) {
     console.error('Gemini API error:', error);
     
-    // Fallback to basic extraction if Gemini fails
-    const words = description.split(' ');
+    // Improved fallback logic
+    const words = description.toLowerCase().split(' ');
     
     // If the description is short (likely a title), return it as is
-    if (words.length <= 3) {
+    if (words.length <= 4) {
       return description.trim();
     }
 
-    // Look for year and extract key terms
-    const yearMatch = description.match(/\b(19|20)\d{2}\b/);
-    const genreMatch = description.match(/\b(animated?|anime|action|comedy|drama|horror|thriller|sci-?fi|romance|fantasy)\b/i);
+    // Look for movie-specific keywords and extract the most relevant phrase
+    const movieKeywords = ['movie', 'film', 'anime', 'animation', 'documentary'];
+    const actionWords = ['about', 'where', 'with', 'starring', 'directed', 'from'];
     
-    let fallbackTerms = [];
-    
-    // Add potential title (first few words)
-    fallbackTerms.push(words.slice(0, Math.min(3, words.length)).join(' '));
-    
-    if (yearMatch) {
-      fallbackTerms.push(yearMatch[0]);
+    // Try to extract the core description after action words
+    for (const action of actionWords) {
+      const actionIndex = words.indexOf(action);
+      if (actionIndex !== -1 && actionIndex < words.length - 1) {
+        // Take the next 2-4 words after the action word
+        const relevantWords = words.slice(actionIndex + 1, actionIndex + 4);
+        if (relevantWords.length > 0) {
+          return relevantWords.join(' ');
+        }
+      }
     }
     
-    if (genreMatch) {
-      fallbackTerms.push(genreMatch[1].toLowerCase());
-    }
+    // If no action words found, take the middle portion (skip common movie descriptors)
+    const filteredWords = words.filter(word => 
+      !movieKeywords.includes(word) && 
+      word.length > 2 && 
+      !['the', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'].includes(word)
+    );
     
-    return fallbackTerms.join(', ');
+    // Return the first 2-3 meaningful words
+    return filteredWords.slice(0, 3).join(' ');
   }
 }

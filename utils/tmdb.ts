@@ -104,22 +104,16 @@ export async function getMovieDetails(movieId: number): Promise<Movie> {
 }
 
 export async function searchMovies(queryInput: string): Promise<Movie[]> {
-  // Split input into individual search terms
-  const searchTerms = queryInput.split(',').map(term => term.trim());
-
-  // Search with each term and combine results
-  const searchPromises = searchTerms.map(term => searchWithQuery(term));
-  const searchResults = await Promise.all(searchPromises);
-
-  // Combine results and remove duplicates
-  const uniqueMovies = new Map<number, Movie>();
-  searchResults.flat().forEach(movie => {
-    if (!uniqueMovies.has(movie.id)) {
-      uniqueMovies.set(movie.id, movie);
-    }
-  });
-
-  return Array.from(uniqueMovies.values());
+  // Use the most relevant search term (first one if multiple)
+  const primarySearchTerm = queryInput.split(',')[0].trim();
+  
+  console.log('Primary search term:', primarySearchTerm);
+  
+  // Search with the primary term only for more focused results
+  const results = await searchWithQuery(primarySearchTerm);
+  
+  // Limit results to top 12 most relevant movies
+  return results.slice(0, 12);
 }
 
 export type { Movie };
