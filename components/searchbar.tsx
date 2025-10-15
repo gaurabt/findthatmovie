@@ -60,7 +60,7 @@ export default function Searchbar() {
   };
 
   return (
-    <div className="w-full max-w-6xl mx-auto px-4">
+    <div className="w-full max-w-6xl mx-auto">
       <div className="w-full flex justify-center sm:justify-start mb-8">
         <form onSubmit={handleSubmit} className="flex w-full max-w-xl gap-2">
           <input
@@ -69,12 +69,12 @@ export default function Searchbar() {
             type="text"
             name="description"
             placeholder="e.g., A space adventure with a lovable robot"
-            className="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-grow px-4 py-2 border border-gray-300 rounded-md focus:outline-none hover:ring-2 hover:ring-emerald-700 focus:ring-2 focus:ring-emerald-700 transition-all duration-200"
           />
           <button
             type="submit"
             disabled={loading}
-            className={`px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 ${
+            className={`px-4 py-2 bg-cyan-700 text-white font-bold rounded-md hover:bg-cyan-600 hover:scale-[1.01] focus:outline-none cursor-pointer transition-all duration-200 ${
               loading ? 'opacity-50 cursor-not-allowed' : ''
             }`}
           >
