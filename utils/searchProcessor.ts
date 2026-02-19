@@ -45,6 +45,10 @@ const MOVIE_PATTERNS: MoviePattern[] = [
   }
 ];
 
+// TODO: Enhance search processor to support advanced filters (genre, year, rating)
+// TODO: Add language support for non-English movie descriptions
+// TODO: Add recommendation algorithm to suggest similar movies
+
 // Common stop words to filter out
 const STOP_WORDS = new Set([
   'a', 'an', 'and', 'are', 'as', 'at', 'be', 'by', 'for', 'from', 'has', 'he',

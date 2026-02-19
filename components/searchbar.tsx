@@ -1,6 +1,5 @@
 'use client';
 import React, { useState, useEffect } from 'react';
-import MovieCard from './MovieCard';
 
 interface Movie {
   id: number;
@@ -11,11 +10,17 @@ interface Movie {
   vote_average: number;
 }
 
-export default function Searchbar() {
+interface SearchbarProps {
+  setMovies: React.Dispatch<React.SetStateAction<Movie[]>>;
+}
+
+export default function Searchbar({ setMovies }: SearchbarProps) {
   const [description, setDescription] = useState('');
-  const [movies, setMovies] = useState<Movie[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  // TODO: Add advanced filters state (genre, year, rating) for future filter enhancement
+  // TODO: Add user authentication state for future saved searches functionality
+  // TODO: Add language preference state for multiple language support
 
   // Clear results when search input is empty after a delay
   useEffect(() => {
@@ -61,7 +66,7 @@ export default function Searchbar() {
 
   return (
     <div className="w-full max-w-6xl mx-auto">
-      <div className="w-full flex justify-center sm:justify-start mb-8">
+      <div className="w-full flex sm:justify-center mb-8">
         <form onSubmit={handleSubmit} className="flex w-full max-w-xl gap-2">
           <input
             value={description}
@@ -85,21 +90,6 @@ export default function Searchbar() {
 
       {error && (
         <div className="text-red-500 text-center mb-4">{error}</div>
-      )}
-
-      {movies.length > 0 && (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-          {movies.map((movie) => (
-            <MovieCard
-              key={movie.id}
-              title={movie.title}
-              overview={movie.overview}
-              posterPath={movie.poster_path}
-              releaseDate={movie.release_date}
-              voteAverage={movie.vote_average}
-            />
-          ))}
-        </div>
       )}
     </div>
   );

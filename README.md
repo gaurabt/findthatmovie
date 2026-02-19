@@ -111,11 +111,29 @@ Fetches movie data including:
 
 ## Future Enhancements
 
-- [ ] User authentication and saved searches
-- [ ] Advanced filters (genre, year, rating)
-- [ ] Multiple language support
-- [ ] Movie recommendations
-- [ ] Share functionality
+> **Note**: TODO comments have been added to relevant files to track implementation progress.
+
+### Planned Features
+
+- [ ] **User Authentication & Saved Searches**
+  - Location: `app/page.tsx`, `components/SearchBar.tsx`, `components/SearchPanel.tsx`
+  - Add user login/signup functionality and persist search history
+
+- [ ] **Advanced Filters** (genre, year, rating)
+  - Location: `components/SearchBar.tsx`, `components/SearchResults.tsx`, `utils/searchProcessor.ts`
+  - Implement filter UI and enhance search processor to handle filtered queries
+
+- [ ] **Multiple Language Support**
+  - Location: `app/page.tsx`, `components/SearchBar.tsx`, `utils/searchProcessor.ts`
+  - Add i18n support for UI translations and language-aware processing
+
+- [ ] **Movie Recommendations**
+  - Location: `components/MovieCard.tsx`, `components/SearchResults.tsx`, `utils/searchProcessor.ts`
+  - Implement algorithm to suggest similar movies based on search results
+
+- [ ] **Share Functionality**
+  - Location: `components/MovieCard.tsx`
+  - Add buttons to share movie results on social media platforms
 
 ## Contributing
 

@@ -15,6 +15,10 @@ export default function MovieCard({
   releaseDate,
   voteAverage,
 }: MovieCardProps) {
+  // TODO: Add share functionality - implement share button for social media
+  // TODO: Add save to favorites - persist to user account when authentication is implemented
+  // TODO: Add related movies recommendations when recommendation feature is added
+  
   const imageUrl = posterPath
     ? `https://image.tmdb.org/t/p/w500${posterPath}`
     : '/no-poster.png';
