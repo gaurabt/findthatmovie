@@ -29,8 +29,6 @@ async function searchWithQuery(query: string): Promise<Movie[]> {
       throw new Error('TMDB API key is not configured');
     }
 
-    console.log('Searching with query:', query);
-
     const url = new URL(`${TMDB_BASE_URL}/search/movie`);
     url.searchParams.append('api_key', TMDB_API_KEY);
     url.searchParams.append('query', query);
@@ -54,13 +52,6 @@ async function searchWithQuery(query: string): Promise<Movie[]> {
         errorText = await response.text();
       }
       
-      console.error('TMDB API Error:', {
-        status: response.status,
-        statusText: response.statusText,
-        headers: Object.fromEntries(response.headers.entries()),
-        error: errorText
-      });
-      
       throw new Error(`TMDB API error: ${response.status} ${response.statusText}`);
     }
 
@@ -69,13 +60,6 @@ async function searchWithQuery(query: string): Promise<Movie[]> {
       console.error('Invalid TMDB API response:', data);
       throw new Error('Invalid response from TMDB API');
     }
-
-    console.log('TMDB API Response:', {
-      total_results: data.total_results,
-      page: data.page,
-      total_pages: data.total_pages,
-      results_count: data.results.length
-    });
     
     return data.results;
   } catch (error) {
@@ -107,8 +91,6 @@ export async function getMovieDetails(movieId: number): Promise<Movie> {
 export async function searchMovies(queryInput: string): Promise<Movie[]> {
   // Use the most relevant search term (first one if multiple)
   const primarySearchTerm = queryInput.split(',')[0].trim();
-  
-  console.log('Primary search term:', primarySearchTerm);
   
   // Search with the primary term only for more focused results
   const results = await searchWithQuery(primarySearchTerm);
