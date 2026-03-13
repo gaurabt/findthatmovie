@@ -1,6 +1,6 @@
 'use client';
 import React, { useState } from 'react';
-import Searchbar from './Searchbar';
+import Searchbar from './searchbar';
 
 interface Movie {
   id: number;
