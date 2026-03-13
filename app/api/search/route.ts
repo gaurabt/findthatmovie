@@ -63,11 +63,12 @@ export async function POST(request: Request) {
       }
     });
 
-  } catch (error: any) {
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : 'Failed to search movies';
     console.error('Search error:', error);
     return NextResponse.json(
-      { 
-        error: error.message || 'Failed to search movies',
+      {
+        error: errorMessage,
         success: false
       },
       { status: 500 }
