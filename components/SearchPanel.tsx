@@ -1,9 +1,6 @@
 'use client';
 
-import Searchbar from "./Searchbar";
-
-
-
+import Searchbar from "./searchbar";
 interface Movie {
   id: number;
   title: string;
