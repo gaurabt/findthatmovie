@@ -1,4 +1,4 @@
-const TMDB_API_KEY = process.env.NEXT_PUBLIC_TMDB_API_KEY;
+const TMDB_API_KEY = process.env.TMDB_API_KEY;
 const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
 
 interface MovieSearchResponse {
@@ -22,10 +22,7 @@ async function searchWithQuery(query: string): Promise<Movie[]> {
   try {
     if (!TMDB_API_KEY) {
       console.error('TMDB_API_KEY is undefined');
-      console.error('Available env vars:', {
-        TMDB_API_KEY: !!process.env.NEXT_PUBLIC_TMDB_API_KEY,
-        TMDB_API_URL: !!process.env.NEXT_PUBLIC_TMDB_API_URL
-      });
+      console.error('TMDB_API_KEY is not set in environment');
       throw new Error('TMDB API key is not configured');
     }
 

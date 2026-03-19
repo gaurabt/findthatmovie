@@ -4,7 +4,7 @@ import { generateSearchTerms } from '@/utils/gemini';
 
 export async function POST(request: Request) {
   // Check for required API keys
-  if (!process.env.NEXT_PUBLIC_TMDB_API_KEY) {
+  if (!process.env.TMDB_API_KEY) {
     console.error('TMDB API key is missing in environment');
     return NextResponse.json(
       { error: 'TMDB API key not configured' },

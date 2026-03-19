@@ -4,9 +4,6 @@ export async function generateSearchTerms(description: string): Promise<string> 
   try {
     // Check if API key is available
     const apiKey = process.env.GEMINI_API_KEY;
-    console.log('GEMINI_API_KEY status:', apiKey ? 'Present' : 'Missing');
-    console.log('API Key length:', apiKey?.length || 0);
-    
     if (!apiKey || apiKey === 'your_gemini_api_key_here') {
       throw new Error('GEMINI_API_KEY is not configured');
     }
